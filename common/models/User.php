@@ -17,6 +17,7 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string $auth_key
  * @property integer $status
+ * @property integer $role
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
@@ -25,6 +26,12 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+
+    const ROLE_USER = 0;
+    const ROLE_ADMIN = 1;
+
+    public $password;
+    public $section;
 
 
     /**
@@ -51,8 +58,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['username', 'email'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['role', 'default', 'value' => self::ROLE_USER],
         ];
     }
 
@@ -185,5 +194,50 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+
+    public function getAvailableSections()
+    {
+        return Section::find()
+            ->joinWith('users')
+            ->where([Subscription::tableName().'.user_id' => $this->id])
+            ->all();
+    }
+
+    public function hasAccessFor(Section $section)
+    {
+        $subscription = Subscription::findOne([
+            'user_id' => $this->id,
+            'section_id' => $section->id,
+        ]);
+
+        return $subscription ? true : false;
+    }
+
+    public function addSection(Section $section)
+    {
+        $subscriptionExists = Subscription::findOne([
+            'user_id' => $this->id,
+            'section_id' => $section->id,
+        ]);
+
+        if(!$subscriptionExists) {
+            $subscription = new Subscription();
+
+            $subscription->load(['Subscription' => [
+                'user_id' => $this->id,
+                'section_id' => $section->id,
+            ]]);
+
+            return $subscription->save();
+        }
+
+        return true;
+    }
+
+    public function getDate($date)
+    {
+        return Yii::$app->formatter->asDate($date, 'medium');
     }
 }

@@ -16,6 +16,7 @@ class m170202_114734_topic extends Migration
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull()->unique(),
             'slug' => $this->string()->notNull()->unique(),
+            'status' => $this->integer(),
             'description' => $this->string(),
             'section_id' => $this->integer(),
 

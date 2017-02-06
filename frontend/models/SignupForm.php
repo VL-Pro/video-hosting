@@ -47,11 +47,14 @@ class SignupForm extends Model
             return null;
         }
         
+        $userExists = User::find()->all();
+
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
+        $user->role = $userExists ? User::ROLE_USER : User::ROLE_ADMIN;
         
         return $user->save() ? $user : null;
     }

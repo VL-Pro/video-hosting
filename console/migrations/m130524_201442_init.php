@@ -21,6 +21,7 @@ class m130524_201442_init extends Migration
             'email' => $this->string()->notNull()->unique(),
 
             'secret_key' => $this->string()->unique(),
+            'role' => $this->integer()->notNull(),
 
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
             'created_at' => $this->integer()->notNull(),
