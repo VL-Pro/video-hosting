@@ -2,7 +2,10 @@
 
 namespace common\models;
 
+
 use Yii;
+use yii\base\Exception;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "image".
@@ -18,7 +21,7 @@ use Yii;
  * @property Section[] $sections
  * @property Video[] $videos
  */
-class Image extends \yii\db\ActiveRecord
+class Image extends BaseModel
 {
     /**
      * @inheritdoc
@@ -72,5 +75,57 @@ class Image extends \yii\db\ActiveRecord
     public function getVideos()
     {
         return $this->hasMany(Video::className(), ['image_id' => 'id']);
+    }
+
+    public static function getImageParentFolderPath()
+    {
+        return Yii::getAlias('@backend/web/');
+    }
+
+    public static function getImagesParentFolderLink()
+    {
+        return Yii::$app->request->hostInfo.'/backend/web/';
+    }
+
+
+    /**
+     * @param $file \yii\web\UploadedFile
+     * @param $folder string
+     * @param null $id int
+     *
+     * @return Image|null
+     */
+    public static function upload($file, $folder, $id=null)
+    {
+
+        $imageName = time().uniqid('', false);
+
+        $path = self::getImageParentFolderPath();
+
+        $directory = $path.$folder;
+        FileHelper::createDirectory($directory, 0775, $recursive = true);
+        $file->saveAs("$directory/$imageName." . $file->extension);
+
+        if(!$id) {
+            $modelImage = new Image();
+        } else {
+            $modelImage = self::findOne($id);
+            if(file_exists($path."$modelImage->path")) {
+                try {
+                    unlink($path . "$modelImage->path");
+                } catch (Exception $exception) {
+                    //log
+                }
+            }
+        }
+
+        $modelImage->name = $imageName;
+        $modelImage->path = $folder."/$imageName.".$file->extension;
+
+        if($modelImage->save()) {
+            return $modelImage;
+        }
+
+        return null;
     }
 }

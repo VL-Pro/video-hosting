@@ -12,6 +12,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\web\UploadedFile;
 
 class BaseModel extends ActiveRecord
 {
@@ -19,6 +20,35 @@ class BaseModel extends ActiveRecord
     const STATUS_INV = 5;
     const STATUS_DELETED = 0;
 
+    public $imageFile;
+
+
+    function getClassName()
+    {
+        $className = get_class($this);
+        if ($className)
+        {
+            $slashPos = strripos($className, "\\");
+            return strtolower(substr($className,  $slashPos ? $slashPos + 1 : 0));
+        }
+        return false;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function uploadImage()
+    {
+        $file = UploadedFile::getInstance($this, 'imageFile');
+
+        if($image = Image::upload($file, "images/".$this->getClassName()."/$this->slug", $this->image ? $this->image->id : null )){
+            $this->image_id = $image->id;
+            return true;
+        }
+
+        return false;
+    }
 
     public function behaviors()
     {

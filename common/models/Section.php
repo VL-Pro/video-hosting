@@ -2,8 +2,7 @@
 
 namespace common\models;
 
-use Faker\Provider\Base;
-use Yii;
+
 
 
 /**
@@ -100,6 +99,7 @@ class Section extends BaseModel
     {
         return $this->hasMany(Topic::className(), ['section_id' => 'id']);
     }
+
 
     public function __toString()
     {

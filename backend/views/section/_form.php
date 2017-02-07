@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 
 <div class="section-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -18,7 +18,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'status')->textInput() ?>
 
-    <?= $form->field($model, 'image_id')->textInput() ?>
+    <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Image') ?>
+
+<!--    --><?//= $form->field($model, 'image_id')->textInput() ?>
 
 <!--    --><?//= $form->field($model, 'created_at')->textInput() ?>
 <!---->
