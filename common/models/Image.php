@@ -97,35 +97,35 @@ class Image extends BaseModel
      */
     public static function upload($file, $folder, $id=null)
     {
+        if ($file) {
 
-        $imageName = time().uniqid('', false);
+            $imageName = time() . uniqid('', false);
+            $path = self::getImageParentFolderPath();
+            $directory = $path . $folder;
+            FileHelper::createDirectory($directory, 0775, $recursive = true);
+            $file->saveAs("$directory/$imageName." . $file->extension);
 
-        $path = self::getImageParentFolderPath();
-
-        $directory = $path.$folder;
-        FileHelper::createDirectory($directory, 0775, $recursive = true);
-        $file->saveAs("$directory/$imageName." . $file->extension);
-
-        if(!$id) {
-            $modelImage = new Image();
-        } else {
-            $modelImage = self::findOne($id);
-            if(file_exists($path."$modelImage->path")) {
-                try {
-                    unlink($path . "$modelImage->path");
-                } catch (Exception $exception) {
-                    //log
+            if (!$id) {
+                $modelImage = new Image();
+            } else {
+                $modelImage = self::findOne($id);
+                if (file_exists($path . "$modelImage->path")) {
+                    try {
+                        unlink($path . "$modelImage->path");
+                    } catch (Exception $exception) {
+                        //log
+                    }
                 }
             }
+
+            $modelImage->name = $imageName;
+            $modelImage->path = $folder . "/$imageName." . $file->extension;
+
+            if ($modelImage->save()) {
+                return $modelImage;
+            }
+            return null;
         }
-
-        $modelImage->name = $imageName;
-        $modelImage->path = $folder."/$imageName.".$file->extension;
-
-        if($modelImage->save()) {
-            return $modelImage;
-        }
-
         return null;
     }
 }

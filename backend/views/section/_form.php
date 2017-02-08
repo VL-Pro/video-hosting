@@ -16,9 +16,19 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Image') ?>
+    <?= $form->field($model, 'status')->dropDownList([
+            \common\models\Section::STATUS_ACTIVE => 'Active',
+            \common\models\Section::STATUS_INV => 'Invisible',
+            \common\models\Section::STATUS_DELETED => 'Deleted'])
+    ?>
+    <?php if($model->image) : ?>
+        <div>
+            <img src="<?= \common\models\Image::getImagesParentFolderLink().$model->image->path ?>">
+        </div>
+        <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Update Preview Image') ?>
+    <?php else: ?>
+        <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Choose Preview Image') ?>
+    <?php endif; ?>
 
 <!--    --><?//= $form->field($model, 'image_id')->textInput() ?>
 

@@ -31,7 +31,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'slug',
-            'status',
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function($model) {
+                    if($model->status == \common\models\Section::STATUS_ACTIVE) {
+                        return "Active";
+                    } elseif($model->status == \common\models\Section::STATUS_INV) {
+                        return "Invisible";
+                    } else {
+                        return "Deleted";
+                    }
+                }
+            ],
             [
                 'attribute' =>'image_id',
                 'format' => ['image', ['width' => '250']],

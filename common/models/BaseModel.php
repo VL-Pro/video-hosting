@@ -41,13 +41,14 @@ class BaseModel extends ActiveRecord
     public function uploadImage()
     {
         $file = UploadedFile::getInstance($this, 'imageFile');
-
-        if($image = Image::upload($file, "images/".$this->getClassName()."/$this->slug", $this->image ? $this->image->id : null )){
-            $this->image_id = $image->id;
-            return true;
+        if($file) {
+            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/$this->slug", $this->image ? $this->image->id : null)) {
+                $this->image_id = $image->id;
+                return true;
+            }
+            return false;
         }
-
-        return false;
+        return true;
     }
 
     public function behaviors()
