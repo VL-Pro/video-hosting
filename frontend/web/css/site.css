@@ -118,3 +118,12 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+
+.section-link {
+    margin-top: 20px;
+}
+
+.section-desc > p {
+    margin-top: 10px;
+}
