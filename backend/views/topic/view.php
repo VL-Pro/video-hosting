@@ -32,12 +32,44 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'slug',
             'description',
-            'status',
-            'section_id',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function($model) {
+                    if($model->status == \common\models\Section::STATUS_ACTIVE) {
+                        return "Active";
+                    } elseif($model->status == \common\models\Section::STATUS_INV) {
+                        return "Invisible";
+                    } else {
+                        return "Deleted";
+                    }
+                }
+            ],
+            [
+                'attribute' => 'section_id',
+                'format' => 'raw',
+                'value' => \common\models\Section::getSection($model->section_id),
+            ],
+            [
+                'attribute' => 'created_at',
+                'format' => 'raw',
+                'value' => $model->getDate($model->created_at),
+            ],
+            [
+                'attribute' => 'created_by',
+                'format' => 'raw',
+                'value' => $model->getCreatedBy('username'),
+            ],
+            [
+                'attribute' => 'updated_at',
+                'format' => 'raw',
+                'value' => $model->getDate($model->updated_at),
+            ],
+            [
+                'attribute' => 'updated_by',
+                'format' => 'raw',
+                'value' => $model->getUpdatedBy('username'),
+            ],
         ],
     ]) ?>
 

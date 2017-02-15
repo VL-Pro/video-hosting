@@ -114,7 +114,7 @@ class Video extends \common\models\BaseModel
         $file = UploadedFile::getInstance($this, 'imageFile');
 
         if($file) {
-            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/" . $this->section . "/" . $this -> topic_id, $this->image ? $this->image->id : null)) {
+            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/" . Section::getSection($this->section) . "/" . Topic::getTopic($this->topic_id), $this->image ? $this->image->id : null)) {
                 $this->image_id = $image->id;
                 return true;
             }

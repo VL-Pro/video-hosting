@@ -26,10 +26,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
             // 'id',
             'name',
-            'slug',
+            //'slug',
             'description',
-            'status',
-            'section_id',
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function($model) {
+                    if($model->status == \common\models\Section::STATUS_ACTIVE) {
+                        return "Active";
+                    } elseif($model->status == \common\models\Section::STATUS_INV) {
+                        return "Invisible";
+                    } else {
+                        return "Deleted";
+                    }
+                }
+            ],
+            [
+                'attribute' => 'section_id',
+                'format' => 'raw',
+                'value' => function($data) {
+                    return \common\models\Section::getSection($data->section_id);
+                },
+            ],
             // 'created_at',
             // 'created_by',
             // 'updated_at',

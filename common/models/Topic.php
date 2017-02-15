@@ -60,7 +60,7 @@ class Topic extends BaseModel
             'slug' => 'Slug',
             'description' => 'Description',
             'status' => 'Status',
-            'section_id' => 'Section ID',
+            'section_id' => 'Section',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
