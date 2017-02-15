@@ -2,7 +2,9 @@
 
 namespace common\models;
 
-use Yii;
+use yii\base\Exception;
+use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "video".
@@ -25,6 +27,9 @@ use Yii;
  */
 class Video extends \common\models\BaseModel
 {
+    public $section;
+    public $videoFile;
+
     /**
      * @inheritdoc
      */
@@ -39,8 +44,8 @@ class Video extends \common\models\BaseModel
     public function rules()
     {
         return [
-            [['name', 'path'], 'required'],
-            [['topic_id', 'image_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['name', 'path', 'topic_id'], 'required'],
+            [['section', 'topic_id', 'image_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name', 'path', 'description'], 'string', 'max' => 255],
             [['name'], 'unique'],
             [['path'], 'unique'],
@@ -98,5 +103,52 @@ class Video extends \common\models\BaseModel
     public function getTopic()
     {
         return $this->hasOne(Topic::className(), ['id' => 'topic_id']);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function uploadImage()
+    {
+        $file = UploadedFile::getInstance($this, 'imageFile');
+
+        if($file) {
+            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/" . $this->section . "/" . $this -> topic_id, $this->image ? $this->image->id : null)) {
+                $this->image_id = $image->id;
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public function uploadVideo()
+    {
+        $file = UploadedFile::getInstance($this, 'videoFile');
+        if($file) {
+            $folder = "videos/".Section::getSection($this->section)."/".Topic::getTopic($this->topic_id);
+
+            $videoName = time() . uniqid('', false);
+
+            $path = self::getParentFolderPath();
+            $directory = $path . $folder;
+            FileHelper::createDirectory($directory, 0775, $recursive = true);
+            $file->saveAs("$directory/$videoName." . $file->extension);
+
+
+            if($this->id){
+                if(file_exists($path.$this->path)){
+                    try {
+                        unlink($path.$this->path);
+                    } catch (Exception $exception) {
+                        // log
+                    }
+                }
+            }
+
+            $this->path = $folder . "/$videoName." . $file->extension;
+        }
+        return true;
     }
 }

@@ -105,4 +105,8 @@ class Section extends BaseModel
     {
         return (string)$this->name;
     }
+
+    public static function getSection($section_id) {
+        return self::findOne($section_id);
+    }
 }

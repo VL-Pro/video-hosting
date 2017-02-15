@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\models\Section;
 use Yii;
 use common\models\Video;
+use common\models\Topic;
 use backend\models\VideoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,8 +66,19 @@ class VideoController extends Controller
     public function actionCreate()
     {
         $model = new Video();
+//        $post = Yii::$app->request->post();
+//
+//        if($post) {
+//            $model->load($post);
+//            $model->uploadVideo();
+//            $model->save();
+//        }
+//
+//        return $this->render('create', ['model' => $model]);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+
+        if ($model->load(Yii::$app->request->post()) && $model->uploadVideo() && $model->uploadImage() && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -84,9 +97,15 @@ class VideoController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->uploadVideo() && $model->uploadImage() && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            if($model->topic_id) {
+                $section_id = $model->getTopic()->one()->section_id;
+                $section = Section::getSection($section_id);
+
+                $model->section = $section;
+            }
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -119,6 +138,26 @@ class VideoController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionLists($id)
+    {
+        $countTopics = Topic::find()
+            ->where(['section_id' => $id])
+            ->count();
+
+        $topics = Topic::find()
+            ->where(['section_id'=>$id])
+            ->all();
+
+        echo "<option>Select topic</option>";
+        if($countTopics > 0)
+        {
+
+            foreach ($topics as $row) {
+                echo "<option value='".$row->id."'>".$row->name."</option>";
+            }
         }
     }
 }

@@ -24,6 +24,8 @@ use Yii;
 class Topic extends BaseModel
 {
 
+
+
     /**
      * @inheritdoc
      */
@@ -39,7 +41,7 @@ class Topic extends BaseModel
     {
         return [
             [['name', 'slug'], 'required'],
-            [['status', 'section_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['section_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name', 'slug', 'description'], 'string', 'max' => 255],
             [['name'], 'unique'],
             [['slug'], 'unique'],
@@ -80,5 +82,16 @@ class Topic extends BaseModel
     public function getVideos()
     {
         return $this->hasMany(Video::className(), ['topic_id' => 'id']);
+    }
+
+
+    public function __toString()
+    {
+        return (string)$this->name;
+    }
+
+    public static function getTopic($topic_id)
+    {
+        return self::findOne($topic_id);
     }
 }

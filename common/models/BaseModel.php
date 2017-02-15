@@ -21,6 +21,7 @@ class BaseModel extends ActiveRecord
     const STATUS_DELETED = 0;
 
     public $imageFile;
+    public $videoFile;
 
 
     function getClassName()
@@ -41,8 +42,9 @@ class BaseModel extends ActiveRecord
     public function uploadImage()
     {
         $file = UploadedFile::getInstance($this, 'imageFile');
+
         if($file) {
-            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/$this->slug", $this->image ? $this->image->id : null)) {
+            if ($image = Image::upload($file, "images/" . $this->getClassName() . (property_exists($this, 'slug') ? "/$this->slug" : ''), $this->image ? $this->image->id : null)) {
                 $this->image_id = $image->id;
                 return true;
             }
@@ -50,6 +52,8 @@ class BaseModel extends ActiveRecord
         }
         return true;
     }
+
+
 
     public function behaviors()
     {
@@ -84,5 +88,15 @@ class BaseModel extends ActiveRecord
     public static function getActive()
     {
         return self::findAll(['status' => self::STATUS_ACTIVE]);
+    }
+
+    public static function getParentFolderPath()
+    {
+        return Yii::getAlias('@backend/web/');
+    }
+
+    public static function getParentFolderLink()
+    {
+        return Yii::$app->request->hostInfo.'/backend/web/';
     }
 }

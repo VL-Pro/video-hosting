@@ -29,6 +29,7 @@ class TopicController extends Controller
         ];
     }
 
+
     /**
      * Lists all Topic models.
      * @return mixed
