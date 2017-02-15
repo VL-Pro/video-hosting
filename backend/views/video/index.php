@@ -28,7 +28,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             //'path',
             'description',
-            'topic_id',
+            [
+                'attribute' =>'topic_id',
+                'format' => 'raw',
+                'value' => function($data) {
+                    return \common\models\Topic::getTopic($data->topic_id);
+                }
+            ],
             // 'image_id',
             // 'created_at',
             // 'created_by',
