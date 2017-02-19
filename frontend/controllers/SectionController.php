@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\models\Section;
+use frontend\models\Section;
 use common\models\Topic;
 use yii\data\Pagination;
 use yii\web\NotFoundHttpException;
@@ -17,23 +17,24 @@ class SectionController extends \yii\web\Controller
 
     public function actionView($id)
     {
+        $section = $this->findModel($id);
+
         $query = Topic::find()->where(['section_id' => $id]);
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 10]);
         $models = $query
-            ->offset($pages->offset)
-            ->limit($pages->limit)
-            ->all();
+                ->offset($pages->offset)
+                ->limit($pages->limit)
+                ->all();
+
+
 
         return $this->render('view', [
             'models' => $models,
             'pages' => $pages,
+            'section' => $section,
         ]);
-//        $query = Topic::find()->where($id);
-//        $dataProvider = new ActiveDataProvider([
-//            'query' => $query,
-//        ]);
-//        return $this->render('view', ['dataProvider' => $dataProvider]);
+
     }
 
     protected function findModel($id)

@@ -1,9 +1,15 @@
 <?php
 /* @var $this yii\web\View */
+
+use yii\helpers\Html;
+
+
+$this->title = "Sections";
+
 ?>
-<h1>section/index</h1>
 
 <div class="section-index">
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="body-content">
 
