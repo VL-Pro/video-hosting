@@ -18,7 +18,7 @@ class TopicController extends \yii\web\Controller
     {
         $query = Video::find()->where(['topic_id' => $id]);
         $countQuery = clone $query;
-        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 10]);
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 9]);
         $models = $query
             ->offset($pages->offset)
             ->limit($pages->limit)

@@ -3,7 +3,9 @@
 use yii\widgets\LinkPager;
 use yii\helpers\Html;
 
-/* @var $model \common\models\Topic */
+/* @var $model \common\models\Video */
+/* @var $topic \common\models\Topic */
+/* @var $pages \yii\data\Pagination */
 
 $this->title = $topic->name;
 $this->params['breadcrumbs'][] = ['label' => $section->name, 'url' => ['/section/view', 'id' => $section->id]];
@@ -15,20 +17,46 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="topic-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?php foreach ($models as $model): ?>
-        <div class="video-item">
-            <h2><?= $model->name ?></h2>
-            <p class="description"><?= $model->description ?></p>
-            <p><a class="btn btn-default" href="/video/<?= $model->id ?>">View &raquo;</a></p>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1><?= Html::encode($this->title) ?></h1>
+            <p class="topic-description" ><?= $topic->description ?></p>
         </div>
+    </div>
+
+
+    <?php $i = 0; foreach ($models as $model): ?>
+        <?php if($i % 3 == 0): ?>
+            <div class="row">
+        <?php endif; ?>
+        <div class="col-md-4">
+            <div class="video-item">
+                <a href="#">
+                    <div class="video-box">
+                        <img src="<?= \common\models\Video::getParentFolderLink().$model->image->path ?>">
+                    </div>
+                    <span class="video-name"><?= $model->name ?></span>
+                </a>
+            </div>
+            <div class="video-description">
+                <?= $model->description ?>
+            </div>
+        </div>
+        <?php $i++; if($i % 3 == 0): ?>
+            </div>
+        <?php endif; ?>
     <?php endforeach; ?>
+    <?php if($i % 3 != 0): ?>
+        </div>
+    <?php endif; ?>
 
 
-    <?= LinkPager::widget([
-        'pagination' => $pages,
-    ]);
-    ?>
-
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <?= LinkPager::widget([
+                'pagination' => $pages,
+            ]);
+            ?>
+        </div>
+    </div>
 </div>
