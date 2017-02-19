@@ -11,8 +11,15 @@ class SectionController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $sections = Section::find()->all();
-        return $this->render('index', ['sections' => $sections]);
+        $query = Section::find();
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 9]);
+        $sections = $query
+            ->offset($pages->offset)
+            ->limit($pages->limit)
+            ->all();
+        //$sections = Section::find()->all();
+        return $this->render('index', ['sections' => $sections, 'pages' => $pages]);
     }
 
     public function actionView($id)
