@@ -37,9 +37,18 @@ class VideoController extends \yii\web\Controller
         $user = Yii::$app->user->identity;
         if(isset($user) && $user->hasAccessFor($section)) {
             $this->redirect(['view', 'id'=> $id]);
+        } else if (!isset($user)){
+            $link = 'site/login';
+            $linktext = 'Login';
+            $message = 'Please login to view this content!';
+            return $this->render('preview', ['section' => $section, 'topic' => $topic, 'model' => $model,
+                'message' => $message, 'link' => $link, 'linktext' => $linktext]);
         } else {
-            $path = $model->image->path;
-            return $this->render('preview', ['path' => $path]);
+            $link = 'site/contact';
+            $linktext = 'Contact';
+            $message = "You don't have access to this section. Please contact the administrator!";
+            return $this->render('preview', ['section' => $section, 'topic' => $topic, 'model' => $model,
+                'message' => $message, 'link' => $link, 'linktext' => $linktext]);
         }
     }
 
