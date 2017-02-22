@@ -35,6 +35,16 @@ class Section extends BaseModel
         return 'section';
     }
 
+    public static function findAvailable()
+    {
+        return parent::find()->andWhere(['<>', self::tableName().'.status', self::STATUS_DELETED]);
+    }
+
+    public static function findOneAvailable($id)
+    {
+        return self::findAvailable()->andWhere([self::tableName().'.id' => $id])->one();
+    }
+
     /**
      * @inheritdoc
      */
@@ -108,5 +118,9 @@ class Section extends BaseModel
 
     public static function getSection($section_id) {
         return self::findOne($section_id);
+    }
+
+    public static function getSectionSlug($section_id) {
+        return self::findOne($section_id)->slug;
     }
 }

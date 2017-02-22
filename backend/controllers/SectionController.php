@@ -115,7 +115,7 @@ class SectionController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Section::findOne($id)) !== null) {
+        if (($model = Section::findOneAvailable($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

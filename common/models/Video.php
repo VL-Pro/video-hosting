@@ -38,6 +38,18 @@ class Video extends \common\models\BaseModel
         return 'video';
     }
 
+    public static function findAvailable()
+    {
+        return parent::find()->joinWith('section')
+            ->andWhere(['<>', Topic::tableName().'.status', Topic::STATUS_DELETED])
+            ->andWhere(['<>', Section::tableName().'.status', Section::STATUS_DELETED]);
+    }
+
+    public static function findOneAvailable($id)
+    {
+        return self::findAvailable()->andWhere([self::tableName().'.id' => $id])->one();
+    }
+
     /**
      * @inheritdoc
      */
@@ -105,6 +117,11 @@ class Video extends \common\models\BaseModel
         return $this->hasOne(Topic::className(), ['id' => 'topic_id']);
     }
 
+    public function getSection()
+    {
+        return $this->hasOne(Section::className(), ['id' => 'section_id'])->viaTable(Topic::tableName(), ['id' => 'topic_id']);
+    }
+
 
     /**
      * @return bool
@@ -114,7 +131,7 @@ class Video extends \common\models\BaseModel
         $file = UploadedFile::getInstance($this, 'imageFile');
 
         if($file) {
-            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/" . Section::getSection($this->section) . "/" . Topic::getTopic($this->topic_id), $this->image ? $this->image->id : null)) {
+            if ($image = Image::upload($file, "images/" . $this->getClassName() . "/" . Section::getSectionSlug($this->section) . "/" . Topic::getTopicSlug($this->topic_id), $this->image ? $this->image->id : null)) {
                 $this->image_id = $image->id;
                 return true;
             }
@@ -127,7 +144,7 @@ class Video extends \common\models\BaseModel
     {
         $file = UploadedFile::getInstance($this, 'videoFile');
         if($file) {
-            $folder = "videos/".Section::getSection($this->section)."/".Topic::getTopic($this->topic_id);
+            $folder = "videos/".Section::getSectionSlug($this->section)."/".Topic::getTopicSlug($this->topic_id);
 
             $videoName = time() . uniqid('', false);
 

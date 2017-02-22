@@ -41,7 +41,7 @@ class SectionSearch extends Section
      */
     public function search($params)
     {
-        $query = Section::find();
+        $query = Section::findAvailable();
 
         // add conditions that should always apply here
 

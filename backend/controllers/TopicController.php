@@ -116,7 +116,7 @@ class TopicController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Topic::findOne($id)) !== null) {
+        if (($model = Topic::findOneAvailable($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

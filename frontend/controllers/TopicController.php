@@ -2,10 +2,11 @@
 
 namespace frontend\controllers;
 
-use common\models\Section;
-use common\models\Topic;
-use common\models\Video;
+use frontend\models\Section;
+use frontend\models\Topic;
+use frontend\models\Video;
 use yii\data\Pagination;
+use yii\web\NotFoundHttpException;
 
 class TopicController extends \yii\web\Controller
 {
@@ -16,7 +17,9 @@ class TopicController extends \yii\web\Controller
 
     public function actionView($id)
     {
-        $query = Video::find()->where(['topic_id' => $id]);
+        $topic = $this->findModel($id);
+
+        $query = Video::find()->AndWhere(['topic_id' => $id]);
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 9]);
         $models = $query
@@ -24,7 +27,7 @@ class TopicController extends \yii\web\Controller
             ->limit($pages->limit)
             ->all();
 
-        $topic = Topic::findOne($id);
+
         $section = Section::findOne($topic->section_id);
 
         return $this->render('view', [
@@ -33,6 +36,15 @@ class TopicController extends \yii\web\Controller
             'topic' => $topic,
             'section' => $section,
         ]);
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = Topic::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 
 }

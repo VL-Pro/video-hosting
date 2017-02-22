@@ -134,7 +134,7 @@ class VideoController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Video::findOne($id)) !== null) {
+        if (($model = Video::findOneAvailable($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

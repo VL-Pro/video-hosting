@@ -2,6 +2,8 @@
 
 namespace backend\models;
 
+use common\models\Section;
+use common\models\Topic;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -41,7 +43,10 @@ class VideoSearch extends Video
      */
     public function search($params)
     {
-        $query = Video::find();
+        $query = Video::find()
+            ->joinWith('section')
+            ->andWhere(['<>', 'topic.status', Topic::STATUS_DELETED])
+            ->andWhere(['<>', 'section.status', Section::STATUS_DELETED]);
 
         // add conditions that should always apply here
 

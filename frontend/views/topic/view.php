@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
         <div class="col-md-4">
             <div class="video-item">
-                <a href="#">
+                <a href="/video/<?= $model->id ?>">
                     <div class="video-box">
                         <img src="<?= \common\models\Video::getParentFolderLink().$model->image->path ?>">
                     </div>
@@ -46,9 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         <?php endif; ?>
     <?php endforeach; ?>
-    <?php if($i % 3 != 0): ?>
-        </div>
-    <?php endif; ?>
+    <?php if($i % 3 != 0)
+        echo '</div>';
+    ?>
 
 
     <div class="row">

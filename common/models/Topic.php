@@ -23,15 +23,24 @@ use Yii;
  */
 class Topic extends BaseModel
 {
-
-
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'topic';
+    }
+
+    public static function findAvailable()
+    {
+        return parent::find()->joinWith('section')
+            ->andWhere(['<>', self::tableName().'.status', self::STATUS_DELETED])
+            ->andWhere(['<>', Section::tableName().'.status', Section::STATUS_DELETED]);
+    }
+
+    public static function findOneAvailable($id)
+    {
+        return self::findAvailable()->andWhere([self::tableName().'.id' => $id])->one();
     }
 
     /**
@@ -41,7 +50,7 @@ class Topic extends BaseModel
     {
         return [
             [['name', 'slug'], 'required'],
-            [['section_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['status','section_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['name', 'slug', 'description'], 'string', 'max' => 255],
             [['name'], 'unique'],
             [['slug'], 'unique'],
@@ -93,5 +102,10 @@ class Topic extends BaseModel
     public static function getTopic($topic_id)
     {
         return self::findOne($topic_id);
+    }
+
+    public static function getTopicSlug($topic_id)
+    {
+        return self::findOne($topic_id)->slug;
     }
 }

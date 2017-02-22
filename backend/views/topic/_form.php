@@ -19,13 +19,13 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status')->dropDownList([
-        common\models\Topic::STATUS_ACTIVE => 'Active',
-        common\models\Topic::STATUS_INV => 'Invisible',
-        common\models\Topic::STATUS_DELETED => 'Deleted',
+        \common\models\Topic::STATUS_ACTIVE => 'Active',
+        \common\models\Topic::STATUS_INV => 'Invisible',
+        \common\models\Topic::STATUS_DELETED => 'Deleted',
     ]) ?>
 
     <?= $form->field($model, 'section_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map(\common\models\Section::getActive(), 'id', 'name'),
+        \yii\helpers\ArrayHelper::map(\common\models\Section::findAvailable()->all(), 'id', 'name'),
         ['prompt' => 'Select section']
     ) ?>
 

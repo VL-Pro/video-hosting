@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Section;
-use common\models\Topic;
+use frontend\models\Topic;
 use yii\data\Pagination;
 use yii\web\NotFoundHttpException;
 
@@ -26,7 +26,7 @@ class SectionController extends \yii\web\Controller
     {
         $section = $this->findModel($id);
 
-        $query = Topic::find()->where(['section_id' => $id]);
+        $query = Topic::find()->andWhere(['section_id' => $id]);
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 10]);
         $models = $query

@@ -36,6 +36,8 @@ $this->registerJs($script, yii\web\view::POS_READY);
 
     <?php $form = ActiveForm::begin(); ?>
 
+
+
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
 <!--    --><?//= $form->field($model, 'path')->textInput(['maxlength' => true]) ?>
@@ -43,7 +45,7 @@ $this->registerJs($script, yii\web\view::POS_READY);
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'section')-> dropDownList(
-        \yii\helpers\ArrayHelper::map(\common\models\Section::getActive(), 'id', 'name'),
+        \yii\helpers\ArrayHelper::map(\common\models\Section::findAvailable()->all(), 'id', 'name'),
         ['prompt' => 'Select Section',
         'onchange'=>'$.post("/backend/video/lists?id='.'"+$(this).val(),
         function( data ) {
@@ -54,7 +56,7 @@ $this->registerJs($script, yii\web\view::POS_READY);
 
     <?php if($model->topic_id): ?>
         <?= $form->field($model, 'topic_id')->dropDownList(
-            \yii\helpers\ArrayHelper::map(\common\models\Topic::getActive(), 'id', 'name')); ?>
+            \yii\helpers\ArrayHelper::map(\common\models\Topic::findAvailable()->all(), 'id', 'name')); ?>
     <?php else:?>
         <?= $form->field($model, 'topic_id')->dropDownList(
             //\yii\helpers\ArrayHelper::map(\common\models\Topic::getActive(), 'id', 'name'),
