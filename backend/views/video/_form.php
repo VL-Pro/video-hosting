@@ -68,7 +68,7 @@ $this->registerJs($script, yii\web\view::POS_READY);
 
     <?php if($model->image) : ?>
         <div>
-            <img id="blah" src="<?= \common\models\Image::getImagesParentFolderLink().$model->image->path ?>">
+            <img width="480" id="blah" src="<?= \common\models\Image::getImagesParentFolderLink().$model->image->path ?>">
         </div>
         <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Update Preview Image') ?>
     <?php else: ?>
@@ -78,9 +78,11 @@ $this->registerJs($script, yii\web\view::POS_READY);
         <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*'])->label('Choose Preview Image') ?>
     <?php endif; ?>
 
-    <?php if($model->image) : ?>
+    <?php if($model->path) : ?>
         <div>
-            <img src="<?= \common\models\Image::getImagesParentFolderLink().$model->image->path ?>">
+            <video controls width="480">
+                <source src = "<?= \common\models\Video::getParentFolderLink().$model->path; ?>" type='video/mp4'>
+            </video>
         </div>
         <?= $form->field($model, 'videoFile')->fileInput(['accept' => 'image/*'])->label('Update Video') ?>
     <?php else: ?>
