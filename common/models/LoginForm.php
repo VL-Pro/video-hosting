@@ -44,6 +44,10 @@ class LoginForm extends Model
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
+            } elseif ($user && $user->status == User::STATUS_DELETED) {
+                $this->addError('username', 'Your account has been suspended.');
+            } elseif ($user && $user->status == User::STATUS_WAIT) {
+                $this->addError('username', 'Your account is not verified.');
             }
         }
     }

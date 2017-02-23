@@ -15,6 +15,7 @@ use yii\web\IdentityInterface;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
+ * @property string $secret_key
  * @property string $auth_key
  * @property integer $status
  * @property integer $role
@@ -25,6 +26,7 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
+    const STATUS_WAIT = 5;
     const STATUS_ACTIVE = 10;
 
     const ROLE_USER = 0;
@@ -59,8 +61,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username', 'email'], 'required'],
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_WAIT, self::STATUS_DELETED]],
             ['role', 'default', 'value' => self::ROLE_USER],
         ];
     }
@@ -89,7 +91,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username]);
     }
 
     /**
@@ -243,5 +245,21 @@ class User extends ActiveRecord implements IdentityInterface
     public function getDate($date)
     {
         return Yii::$app->formatter->asDate($date, 'medium');
+    }
+
+
+    public static function findByEmailConfirmToken($email_confirm_token)
+    {
+        return static::findOne(['secret_key' => $email_confirm_token, 'status' => self::STATUS_WAIT]);
+    }
+
+    public function generateEmailConfirmToken()
+    {
+        $this->secret_key = Yii::$app->security->generateRandomString();
+    }
+
+    public function removeEmailConfirmToken()
+    {
+        $this->secret_key = null;
     }
 }

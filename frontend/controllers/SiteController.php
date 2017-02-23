@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use frontend\models\EmailConfirmForm;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -151,15 +152,31 @@ class SiteController extends Controller
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
+                Yii::$app->getSession()->setFlash('success', 'Confirm your email address.');
+                return $this->goHome();
             }
         }
 
         return $this->render('signup', [
             'model' => $model,
         ]);
+    }
+
+    public function actionEmailConfirm($token)
+    {
+        try{
+            $model = new EmailConfirmForm($token);
+        } catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if($model->confirmEmail()) {
+            Yii::$app->getSession()->setFlash('success', 'Your Email successfully confirmed.');
+        } else {
+            Yii::$app->getSession()->setFlash('error', 'Error Confirmation Email.');
+        }
+
+        return $this->goHome();
     }
 
     /**
