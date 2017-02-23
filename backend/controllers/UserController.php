@@ -92,13 +92,18 @@ class UserController extends Controller
 
         $post = Yii::$app->request->post();
 
-        $sections = $post['User']['section'];
-        if(is_array($sections)) {
-            foreach($sections as $section) {
-                $sectionModel = Section::findOne($section);
+        if($post) {
 
-                if($sectionModel) {
-                    $model->addSection($sectionModel);
+            $sections = $post['User']['section'];
+            $model->deleteUserSections();
+            if(is_array($sections)) {
+
+                foreach($sections as $section) {
+                    $sectionModel = Section::findOne($section);
+
+                    if($sectionModel) {
+                        $model->addSection($sectionModel);
+                    }
                 }
             }
         }

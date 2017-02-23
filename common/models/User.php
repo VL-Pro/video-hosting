@@ -217,12 +217,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function addSection(Section $section)
     {
-        $subscriptionExists = Subscription::findOne([
-            'user_id' => $this->id,
-            'section_id' => $section->id,
-        ]);
+//        $subscriptionExists = Subscription::findOne([
+//            'user_id' => $this->id,
+//            'section_id' => $section->id,
+//        ]);
 
-        if(!$subscriptionExists) {
+//        if(!$subscriptionExists) {
             $subscription = new Subscription();
 
             $subscription->load(['Subscription' => [
@@ -231,9 +231,13 @@ class User extends ActiveRecord implements IdentityInterface
             ]]);
 
             return $subscription->save();
-        }
+//        }
 
-        return true;
+//        return true;
+    }
+
+    public function deleteUserSections() {
+        Subscription::deleteAll(['user_id' => $this->id]);
     }
 
     public function getDate($date)
