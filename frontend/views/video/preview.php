@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="row">
-        <div class="preview-item col-md-8 col-lg-offset-2">
+        <div class="preview-item col-md-8 col-md-offset-2">
             <img class="preview-image" src="<?= \common\models\Video::getParentFolderLink().$model->image->path ?>">
             <p class="text-center"><?= $message ?></p>
             <div class="text-center">
